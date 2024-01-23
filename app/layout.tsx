@@ -14,7 +14,7 @@ const font = Figtree({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Spotify Clone',
-  description: 'Listen to music!',
+  description: 'Listen to music!'
 }
 
 export const revalidate = 0;
@@ -30,6 +30,9 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/images/spotifylogo.png" sizes="any" />
+      </head>
       <body className={font.className}>
         <ToasterProvider />
         <SupabaseProvider>
