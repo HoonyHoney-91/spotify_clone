@@ -9,10 +9,13 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useUser } from "@/hooks/useUser";
 import { FaUserAlt } from "react-icons/fa";
 import { toast } from "react-hot-toast";
+import { useMemo } from "react";
+import { usePathname } from "next/navigation";
 
 import Button from "./Button"
 import useAuthModal from "@/hooks/useAuthModal";
 import usePlayer from "@/hooks/usePlayer";
+import HeaderItem from "./HeaderItem";
 
 interface HeaderProps {
     children: React.ReactNode;
@@ -29,6 +32,22 @@ const Header: React.FC<HeaderProps> = ({
 
     const supabaseClient = useSupabaseClient();
     const { user } = useUser();
+
+    const pathname = usePathname();
+    const routes = useMemo(() => [
+        {
+            icon: HiHome,
+            label: 'Home',
+            active: pathname !== '/search',
+            href: '/',
+        },
+        {
+            icon: BiSearch,
+            label: 'Search',
+            active: pathname == '/search',
+            href: '/search',
+        }
+    ], [pathname]);
 
     const handleLogout = async() =>{
         const { error } = await supabaseClient.auth.signOut();
@@ -96,7 +115,23 @@ const Header: React.FC<HeaderProps> = ({
                     </button>
                 </div>
                 <div className="flex md:hidden gap-x-2 items-center">
-                    <button
+                        <button
+                            className="
+                                flex
+                                flex-row
+                                gap-x-3
+                                py-4
+                            "
+                        >
+                            {routes.map((item) => (
+                                <HeaderItem
+                                    key={item.label}
+                                    {...item}
+                                />
+                            ))}
+                        </button>
+
+                    {/* <button
                         className="
                             rounded-full
                             p-2
@@ -123,7 +158,7 @@ const Header: React.FC<HeaderProps> = ({
                         "  
                     >
                         <BiSearch size={20} className="text-black"/>
-                    </button>
+                    </button> */}
                 </div>
                 <div
                     className="
