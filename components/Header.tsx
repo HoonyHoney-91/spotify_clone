@@ -5,12 +5,16 @@ import { twMerge } from "tailwind-merge";
 import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
 import { HiHome } from "react-icons/hi";
 import { BiSearch } from "react-icons/bi";
+import { AiOutlinePlus } from "react-icons/ai";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useUser } from "@/hooks/useUser";
 import { FaUserAlt } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
+
+import useUploadModal from "@/hooks/useUploadModal";
+import useSubscribeModal from "@/hooks/useSubscribeModal";
 
 import Button from "./Button"
 import useAuthModal from "@/hooks/useAuthModal";
@@ -31,7 +35,7 @@ const Header: React.FC<HeaderProps> = ({
     const router = useRouter();
 
     const supabaseClient = useSupabaseClient();
-    const { user } = useUser();
+    const { user, subscription } = useUser();
 
     const pathname = usePathname();
     const routes = useMemo(() => [
@@ -49,6 +53,21 @@ const Header: React.FC<HeaderProps> = ({
         }
     ], [pathname]);
 
+    const uploadModal = useUploadModal();
+    const subscribeModal = useSubscribeModal();
+    const onClick = () => {
+        if (!user){
+            return authModal.onOpen();
+        }
+
+        if (!subscription) {
+            return subscribeModal.onOpen();
+        }
+
+        return uploadModal.onOpen();
+    };
+
+
     const handleLogout = async() =>{
         const { error } = await supabaseClient.auth.signOut();
         player.reset();
@@ -59,7 +78,7 @@ const Header: React.FC<HeaderProps> = ({
         } else{
             toast.success('Logged out!')
         }
-    }
+    };
 
     return ( 
         <div
@@ -119,7 +138,7 @@ const Header: React.FC<HeaderProps> = ({
                             className="
                                 flex
                                 flex-row
-                                gap-x-3
+                                gap-x-2
                                 py-4
                             "
                         >
@@ -130,6 +149,22 @@ const Header: React.FC<HeaderProps> = ({
                                 />
                             ))}
                         </button>
+                        <AiOutlinePlus 
+                            onClick={onClick}
+                            size={36}
+                            className="
+                                rounded-full
+                                p-2
+                                bg-white
+                                flex
+                                items-center
+                                justify-center
+                                hover:opacity-75
+                                text-black
+                                cursor-pointer
+                                transition
+                            "
+                        />
 
                     {/* <button
                         className="
